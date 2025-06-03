@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-bg">
+        <div class="container">
+            <header>
+                <h1>Task Management App</h1>
+            </header>
+            <div class="dashboard-layout">
+                <aside class="sidebar-form">
+                    <form id="task-form" class="task-form">
+                        <input type="text" id="task-title" placeholder="Task Title" required>
+                        <textarea id="task-desc" placeholder="Task Description (Optional)"></textarea>
+                        <select id="task-priority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                        <button type="submit" id="add-task-btn">Add Task</button>
+                    </form>
+                </aside>
+                <main class="main-content">
+                    <div class="controls-bar">
+                        <div>
+                            Sort by:
+                            <select id="sort-by">
+                                <option value="priority">Priority</option>
+                                <option value="title">Title</option>
+                                <option value="status">Status</option>
+                            </select>
+                        </div>
+                        <div>
+                            Filter:
+                            <select id="filter-priority">
+                                <option value="all">All Priorities</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="board">
+                        <div class="column" id="todo-col">
+                            <div class="column-header">Task</div>
+                            <ul class="task-list" id="todo-list"></ul>
+                        </div>
+                        <div class="column" id="inprogress-col">
+                            <div class="column-header">In Progress</div>
+                            <ul class="task-list" id="inprogress-list"></ul>
+                        </div>
+                        <div class="column" id="done-col">
+                            <div class="column-header done-header">Done <button id="clear-all" class="clear-btn">Clear All</button></div>
+                            <ul class="task-list" id="done-list"></ul>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
