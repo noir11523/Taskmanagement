@@ -114,7 +114,7 @@
         li.className = `task-card ${task.priority}`;
         li.innerHTML = `
             <div class="task-title">${task.title}</div>
-            ${task.desc ? `<div class="task-desc">${task.desc}</div>` : ''}
+            <div class="task-desc">${task.desc ? task.desc : ''}</div>
             <div class="task-meta">
                 <span class="status-badge">${task.status}</span>
                 <span class="priority-chip">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
@@ -123,9 +123,17 @@
             <div class="task-actions">
                 ${task.status !== 'todo' ? `<button class="action-btn" onclick="changeStatus('${task.id}', -1)">&#8592;</button>` : ''}
                 ${task.status !== 'done' ? `<button class="action-btn" onclick="changeStatus('${task.id}', 1)">&#8594;</button>` : ''}
+                <button class="edit-btn" onclick="editTask('${task.id}', this)">Edit</button>
+                <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
             </div>
         `;
-
+        const descDiv = li.querySelector('.task-desc');
+        if (descDiv) {
+            descDiv.addEventListener('click', function(e) {
+                editTask(task.id, descDiv);
+                e.stopPropagation();
+            });
+        }
         if (task.status === 'todo') todoList.appendChild(li);
         else if (task.status === 'inprogress') inprogressList.appendChild(li);
         else if (task.status === 'done') doneList.appendChild(li);
@@ -143,6 +151,61 @@
                 saveTasks();
                 renderTasks();
             }
+        }
+    }
+
+    function editTask(id, btn) {
+        const index = tasks.findIndex(t => t.id === id);
+        if (index === -1) return;
+        const li = btn.closest('li');
+        const titleDiv = li.querySelector('.task-title');
+        const descDiv = li.querySelector('.task-desc');
+        if (titleDiv.isContentEditable || (descDiv && descDiv.isContentEditable)) return;
+        titleDiv.contentEditable = true;
+        titleDiv.classList.add('editable-field');
+        if (descDiv) {
+            descDiv.contentEditable = true;
+            descDiv.classList.add('editable-field');
+        }
+        if (btn === descDiv && descDiv) {
+            descDiv.focus();
+        } else {
+            titleDiv.focus();
+        }
+        let blurTimeout;
+        function maybeFinishEdit() {
+            clearTimeout(blurTimeout);
+            blurTimeout = setTimeout(() => {
+                if (document.activeElement !== titleDiv && (!descDiv || document.activeElement !== descDiv)) {
+                    finishEdit();
+                }
+            }, 0);
+        }
+        function finishEdit() {
+            titleDiv.contentEditable = false;
+            titleDiv.classList.remove('editable-field');
+            if (descDiv) {
+                descDiv.contentEditable = false;
+                descDiv.classList.remove('editable-field');
+            }
+            tasks[index].title = titleDiv.textContent.trim();
+            if (descDiv) tasks[index].desc = descDiv.textContent.trim();
+            saveTasks();
+            renderTasks();
+            titleDiv.removeEventListener('blur', maybeFinishEdit);
+            if (descDiv) descDiv.removeEventListener('blur', maybeFinishEdit);
+        }
+        titleDiv.addEventListener('blur', maybeFinishEdit);
+        if (descDiv) descDiv.addEventListener('blur', maybeFinishEdit);
+    }
+
+    function deleteTask(id) {
+        const index = tasks.findIndex(t => t.id === id);
+        if (index === -1) return;
+        if (confirm('Are you sure you want to delete this task?')) {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
         }
     }
 
