@@ -14,29 +14,40 @@ const inprogressList = document.getElementById('inprogress-list');
 const doneList = document.getElementById('done-list');
 const clearAllBtn = document.getElementById('clear-all');
 
+// Predefined order objects for optimized sorting
+const priorityOrder = { high: 0, medium: 1, low: 2 };
+const statusOrder = { todo: 0, inprogress: 1, done: 2 };
+
 function saveTasks() {
     localStorage.setItem('tasks-kanban', JSON.stringify(tasks));
 }
 
 function renderTasks() {
+    // Update dropdowns to reflect current sort/filter
+    sortBySelect.value = sortBy;
+    filterPrioritySelect.value = filterPriority;
+
     // Clear columns
     todoList.innerHTML = '';
     inprogressList.innerHTML = '';
     doneList.innerHTML = '';
+
     // Filter and sort
-    let filtered = tasks.filter(task => filterPriority === 'all' ? true : task.priority === filterPriority);
+    let filtered = tasks.filter(task =>
+        filterPriority === 'all' ? true : task.priority === filterPriority
+    );
+
     filtered = filtered.sort((a, b) => {
         if (sortBy === 'priority') {
-            const order = { high: 0, medium: 1, low: 2 };
-            return order[a.priority] - order[b.priority];
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
         } else if (sortBy === 'title') {
             return a.title.localeCompare(b.title);
         } else if (sortBy === 'status') {
-            const order = { todo: 0, inprogress: 1, done: 2 };
-            return order[a.status] - order[b.status];
+            return statusOrder[a.status] - statusOrder[b.status];
         }
         return 0;
     });
+
     // Render
     filtered.forEach((task, idx) => {
         const li = document.createElement('li');
@@ -90,9 +101,11 @@ taskForm.addEventListener('submit', e => {
             saveTasks();
             renderTasks();
         } else if (e.target.classList.contains('delete-btn')) {
-            tasks.splice(idx, 1);
-            saveTasks();
-            renderTasks();
+            if (confirm("Are you sure you want to delete this task?")) {
+                tasks.splice(idx, 1);
+                saveTasks();
+                renderTasks();
+            }
         } else if (e.target.classList.contains('edit-btn')) {
             editTask(li, idx);
         }
@@ -106,6 +119,7 @@ function editTask(li, idx) {
     titleDiv.contentEditable = true;
     if (descDiv) descDiv.contentEditable = true;
     titleDiv.focus();
+
     function finishEdit() {
         titleDiv.contentEditable = false;
         if (descDiv) descDiv.contentEditable = false;
@@ -116,6 +130,7 @@ function editTask(li, idx) {
         titleDiv.removeEventListener('blur', finishEdit);
         if (descDiv) descDiv.removeEventListener('blur', finishEdit);
     }
+
     titleDiv.addEventListener('blur', finishEdit);
     if (descDiv) descDiv.addEventListener('blur', finishEdit);
 }
@@ -137,4 +152,4 @@ clearAllBtn.addEventListener('click', () => {
 });
 
 // Initial render
-renderTasks(); 
+renderTasks();
