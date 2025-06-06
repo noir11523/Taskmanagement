@@ -22,7 +22,7 @@ body, html {
     box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     max-width: 1200px;
     width: 100%;
-    padding: 38px 38px 30px 38px;
+    padding: 38px;
     margin: 0 16px;
     backdrop-filter: blur(12px);
     border: 1.5px solid rgba(120, 120, 255, 0.13);
@@ -35,25 +35,26 @@ header h1 {
     font-size: 2.6rem;
     font-weight: 700;
     letter-spacing: 1px;
-    background: none;
-    border-radius: 0;
-    padding: 0;
     text-shadow: 0 2px 12px #6c63ff44;
 }
 
-.task-form {
+.task-form, .controls-bar, .column {
     background: rgba(40, 44, 52, 0.85);
     border-radius: 18px;
+    border: 1.5px solid #393e46;
     box-shadow: 0 2px 16px rgba(108, 99, 255, 0.10);
+}
+
+.task-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 30px 24px 20px 24px;
+    padding: 30px 24px 20px;
     margin-bottom: 30px;
-    border: 1.5px solid #393e46;
 }
 
 .task-form input[type="text"],
+.task-form input[type="date"],
 .task-form textarea,
 .task-form select {
     border: 1.5px solid #393e46;
@@ -64,17 +65,13 @@ header h1 {
     color: #fff;
     transition: border 0.2s, background 0.2s;
 }
-.task-form input[type="text"]:focus,
+
+.task-form input:focus,
 .task-form textarea:focus,
 .task-form select:focus {
-    border: 1.5px solid #6c63ff;
+    border-color: #6c63ff;
     background: rgba(108,99,255,0.08);
     outline: none;
-}
-
-.task-form textarea {
-    min-height: 60px;
-    max-height: 120px;
 }
 
 #add-task-btn {
@@ -82,7 +79,7 @@ header h1 {
     color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 15px 0;
+    padding: 15px;
     font-size: 1.15rem;
     font-weight: 700;
     cursor: pointer;
@@ -91,6 +88,7 @@ header h1 {
     transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
     letter-spacing: 0.5px;
 }
+
 #add-task-btn:hover {
     background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
     box-shadow: 0 4px 24px #43e97b33;
@@ -101,47 +99,29 @@ header h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(40, 44, 52, 0.85);
-    border-radius: 14px;
     padding: 15px 24px;
     margin-bottom: 30px;
-    box-shadow: 0 2px 8px #6c63ff11;
-    font-size: 1.08rem;
     gap: 16px;
-    border: 1.5px solid #393e46;
+    font-size: 1.08rem;
     color: #fff;
 }
 
-.controls-bar select {
-    font-size: 1.13rem !important;
-    padding: 12px 18px !important;
-    border-radius: 10px !important;
-    min-width: 160px;
-    background: rgba(40, 44, 52, 0.98) !important;
-    color: #fff !important;
-    border: 1.5px solid #393e46 !important;
-    box-shadow: 0 2px 8px #6c63ff11;
+.controls-bar select,
+select option {
+    background: #232526;
+    color: #fff;
+    font-size: 1.13rem;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1.5px solid #393e46;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    box-shadow: 0 2px 8px #6c63ff11;
     transition: border 0.2s, background 0.2s;
 }
+
 .controls-bar select:focus {
-    border: 1.5px solid #43e97b !important;
+    border-color: #43e97b;
     outline: none;
-}
-
-/* Fix dropdown options for dark mode */
-select option {
-    background: #232526 !important;
-    color: #fff !important;
-    font-size: 1.13rem;
-    padding: 10px 18px;
-}
-
-/* Remove unwanted browser styling for consistency */
-select::-ms-expand {
-    display: none;
 }
 
 .board {
@@ -151,47 +131,26 @@ select::-ms-expand {
 }
 
 .column {
-    background: rgba(40, 44, 52, 0.85);
-    border-radius: 20px;
-    box-shadow: 0 2px 12px #6c63ff11;
-    flex: 1 1 0;
+    flex: 1;
     min-width: 270px;
-    padding: 0 0 24px 0;
+    padding-bottom: 24px;
     display: flex;
     flex-direction: column;
-    margin-bottom: 0;
-    border: 1.5px solid #393e46;
 }
 
 .column-header {
     font-size: 1.22rem;
     font-weight: 700;
     color: #6c63ff;
-    padding: 22px 0 14px 0;
+    padding: 22px 0 14px;
     text-align: center;
     border-bottom: 1.5px solid #393e46;
     margin-bottom: 12px;
-    background: none;
-    border-radius: 20px 20px 0 0;
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-}
-.column-header svg {
-    width: 1.2em;
-    height: 1.2em;
-    vertical-align: middle;
-    margin-right: 6px;
-    fill: #43e97b;
-}
-
-.done-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 18px;
 }
 
 .clear-btn {
@@ -205,10 +164,11 @@ select::-ms-expand {
     font-size: 1rem;
     transition: background 0.2s, color 0.2s, border 0.2s;
 }
+
 .clear-btn:hover {
     background: #43e97b;
     color: #232526;
-    border: 1.5px solid #6c63ff;
+    border-color: #6c63ff;
 }
 
 .task-list {
@@ -223,87 +183,44 @@ select::-ms-expand {
     border-radius: 14px;
     box-shadow: 0 2px 12px #43e97b22;
     margin-bottom: 18px;
-    padding: 18px 16px 14px 16px;
+    padding: 18px 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     position: relative;
     border-left: 7px solid #6c63ff;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    color: #fff;
+    transition: all 0.2s;
     animation: fadeIn 0.4s;
-    color: #fff;
-}
-.task-card.high {
-    border-left-color: #ef4444;
-}
-.task-card.medium {
-    border-left-color: #f59e42;
-}
-.task-card.low {
-    border-left-color: #43e97b;
-}
-.task-card:hover {
-    box-shadow: 0 6px 24px #43e97b33;
-    background: rgba(108,99,255,0.10);
 }
 
-.task-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.2px;
-    margin-bottom: 2px;
-}
-.task-desc {
-    font-size: 1.03rem;
-    color: #b5b5b5;
-    margin-bottom: 2px;
-}
-.task-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.99rem;
-    color: #a3e7c9;
-    margin-bottom: 2px;
-}
+.task-card.high { border-left-color: #ef4444; }
+.task-card.medium { border-left-color: #f59e42; }
+.task-card.low { border-left-color: #43e97b; }
 
-.status-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 8px;
-    font-size: 0.92rem;
-    font-weight: 600;
-    margin-right: 6px;
-    background: linear-gradient(90deg, #6c63ff 0%, #43e97b 100%);
-    color: #fff;
-    letter-spacing: 0.5px;
-}
+.task-title { font-size: 1.15rem; font-weight: 700; }
+.task-desc { font-size: 1.03rem; color: #b5b5b5; }
+.task-meta { display: flex; justify-content: space-between; font-size: 0.99rem; color: #a3e7c9; }
+
+.status-badge,
 .priority-chip {
     display: inline-block;
     padding: 2px 10px;
     border-radius: 8px;
     font-size: 0.92rem;
     font-weight: 600;
-    margin-left: 6px;
-    background: #232526;
-    color: #43e97b;
-    border: 1px solid #43e97b;
+    letter-spacing: 0.5px;
 }
-.task-card.high .priority-chip {
-    background: #232526;
-    color: #ef4444;
-    border: 1px solid #ef4444;
+
+.status-badge {
+    background: linear-gradient(90deg, #6c63ff 0%, #43e97b 100%);
+    color: #fff;
 }
-.task-card.medium .priority-chip {
+
+.priority-chip {
     background: #232526;
-    color: #f59e42;
-    border: 1px solid #f59e42;
-}
-.task-card.low .priority-chip {
-    background: #232526;
-    color: #43e97b;
-    border: 1px solid #43e97b;
+    border: 1px solid;
+    color: inherit;
 }
 
 .task-actions {
@@ -318,115 +235,16 @@ select::-ms-expand {
     cursor: pointer;
     color: #6c63ff;
     font-size: 1.22rem;
-    transition: color 0.2s, background 0.2s, transform 0.1s;
     padding: 4px 10px;
     border-radius: 6px;
+    transition: all 0.2s;
 }
+
 .action-btn:hover {
     color: #fff;
     background: #6c63ff;
     transform: scale(1.12);
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 1200px) {
-    .board {
-        flex-direction: column;
-        gap: 26px;
-    }
-    .container {
-        padding: 18px 4px 8px 4px;
-    }
-}
-
-@media (max-width: 700px) {
-    .container {
-        padding: 8px 0 0 0;
-    }
-    .controls-bar {
-        flex-direction: column;
-        gap: 12px;
-    }
-    select, .controls-bar select, .task-form select {
-        min-width: 120px;
-        font-size: 1.05rem !important;
-        padding: 10px 12px !important;
-    }
-}
-
-.dashboard-layout {
-    display: flex;
-    gap: 36px;
-    align-items: flex-start;
-}
-
-.sidebar-form {
-    flex: 0 0 340px;
-    min-width: 260px;
-    max-width: 380px;
-    margin-right: 0;
-}
-
-.main-content {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-@media (max-width: 1100px) {
-    .dashboard-layout {
-        flex-direction: column;
-        gap: 24px;
-    }
-    .sidebar-form {
-        max-width: 100%;
-        width: 100%;
-    }
-    .main-content {
-        width: 100%;
-    }
-}
-
-@media (max-width: 700px) {
-    .dashboard-layout {
-        flex-direction: column;
-        gap: 16px;
-    }
-    .sidebar-form {
-        max-width: 100%;
-        width: 100%;
-    }
-    .main-content {
-        width: 100%;
-    }
-} 
-
-     .task-form input[type="date"] {
-            border: 1.5px solid #393e46;
-            border-radius: 10px;
-            padding: 13px 15px;
-            font-size: 1.08rem;
-            background: rgba(255,255,255,0.07);
-            color: #fff;
-            transition: border 0.2s, background 0.2s;
-        }
-        .task-form input[type="date"]:focus {
-            border: 1.5px solid #6c63ff;
-            background: rgba(108,99,255,0.08);
-            outline: none;
-        }
-        .task-due {
-            font-size: 0.95rem;
-            color: #f5f5f5;
-            margin-top: 4px;
-            font-style: italic;
-        }
 
 .edit-btn, .delete-btn {
     margin: 0 5px;
@@ -444,4 +262,21 @@ select::-ms-expand {
     border-radius: 6px;
     min-height: 32px;
     padding: 4px 8px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+    .board { flex-direction: column; gap: 26px; }
+    .container { padding: 18px 4px 8px; }
+}
+
+@media (max-width: 700px) {
+    .controls-bar { flex-direction: column; gap: 12px; }
+    select { min-width: 120px; font-size: 1.05rem; padding: 10px 12px; }
+    .dashboard-layout, .main-content, .sidebar-form { width: 100%; gap: 16px; }
+    .dashboard-layout { flex-direction: column; }
 }
