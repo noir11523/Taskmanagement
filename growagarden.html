@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pet Inventory Manager</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #1e1e2f;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    color: #ddd;
+  }
+
+  .container {
+    background: #2b2b3f;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    padding: 30px 25px 35px;
+    text-align: center;
+    position: relative;
+    animation: fadeIn 0.5s ease-in-out;
+    color: #ddd;
+  }
+
+  @keyframes fadeIn {
+    from {opacity:0; transform: translateY(15px);}
+    to {opacity:1; transform: translateY(0);}
+  }
+
+  h1 { font-size: 1.9em; color: #eee; margin-bottom: 15px; }
+
+  label { display: block; text-align: left; font-weight: 600; margin-top: 12px; color: #ccc; }
+
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #555;
+    margin-top: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: #3b3b55;
+    color: #eee;
+    transition: 0.3s;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: #d99a6c;
+    box-shadow: 0 0 8px rgba(217,154,108,0.3);
+  }
+
+  button {
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+  }
+
+  button:hover { opacity: 0.9; }
+
+  #loginContainer button, button.addPetBtn {
+    background: #4caf50; 
+    color: white;
+  }
+  #loginContainer button:hover, button.addPetBtn:hover { background: #43a047; }
+
+  .logout { background: #f44336; color: white; margin-top: 15px; }
+  .logout:hover { background: #d32f2f; }
+
+  #settingsBtn {
+    background: #d99a6c;
+    color: white;
+    font-size: 16px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+
+  #settingsPanel { display: none; margin-top: 15px; text-align: center; }
+
+  #addNewPetBtn, #removePetBtn { background: #d99a6c; color: white; margin-top: 10px; }
+  #addNewPetBtn:hover, #removePetBtn:hover { background: #c47b4a; }
+
+  #saveNewPetBtn { background: #c47b4a; color: white; margin-top: 6px; }
+  #saveNewPetBtn:hover { background: #a85e2f; }
+
+  #exportBtn { background: #e0b390; color: #333; margin-top:10px; }
+  #exportBtn:hover { background: #cfa174; }
+
+  #newPetContainer, #removePetContainer { display: none; margin-top: 10px; }
+
+  #inventoryList { margin-top: 25px; }
+
+  .inventory-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #3b3b55;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+    border-left: 5px solid #d99a6c;
+    transition: 0.3s;
+    color: #eee;
+  }
+
+  .inventory-item:hover { background: #505073; }
+
+  .pet-name { text-align: left; font-weight: 600; color: #eee; }
+
+  .controls button { background: #d99a6c; padding: 6px 10px; border-radius: 8px; font-size: 14px; color: white; margin-left: 5px; }
+  .controls button:hover { background: #c47b4a; }
+  .delete-btn { background: #f44336; }
+  .delete-btn:hover { background: #d32f2f; }
+
+  input[type="file"] { border: 1px solid #555; border-radius: 10px; padding: 6px; font-size: 14px; background: #3b3b55; color: #eee; }
+
+  #searchResults { text-align: left; margin-top: 6px; color: #ccc; font-size: 14px; max-height:150px; overflow-y:auto; }
+
+  @media (max-width:480px) {
+    h1 { font-size:1.5em; }
+    input, select, button { font-size:14px; }
+    .controls button { font-size:13px; }
+    #settingsBtn { width:40px; height:40px; font-size:14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginContainer">
+  <h1>Welcome!</h1>
+  <p style="color:#ccc;">Enter your username to access your pet inventory</p>
+  <input type="text" id="username" placeholder="Enter username">
+  <button onclick="login()">Login</button>
+
+  <label style="margin-top:15px;">Search Available Pets:</label>
+  <input type="text" id="petSearch" placeholder="Type pet name..." oninput="searchPet()">
+  <div id="searchResults"></div>
+</div>
+
+<div class="container" id="mainContainer" style="display:none;">
+  <h1 id="userDisplay"></h1>
+
+  <label>Choose Pet:</label>
+  <select id="petSelect"></select>
+  <button class="addPetBtn" onclick="addPet()">Add Pet</button>
+
+  <button id="settingsBtn" onclick="toggleSettings()">⚙️</button>
+
+  <div id="settingsPanel">
+    <button id="addNewPetBtn" onclick="toggleNewPet()">+ Add New Pet</button>
+    <div id="newPetContainer">
+      <input type="text" id="newPetName" placeholder="Enter new pet name">
+      <button id="saveNewPetBtn" onclick="saveNewPet()">Save New Pet</button>
+    </div>
+
+    <button id="removePetBtn" onclick="toggleRemovePet()">🗑️ Remove Pet from List</button>
+    <div id="removePetContainer">
+      <select id="removePetSelect"></select>
+      <button onclick="removePetFromList()">Remove Selected Pet</button>
+    </div>
+
+    <button id="exportBtn" onclick="exportBackup()">⬇️ Export Backup</button>
+    <input type="file" id="importFile" accept=".json" onchange="importBackup(event)">
+  </div>
+
+  <div id="inventoryList"></div>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<script>
+let currentUser = "";
+let inventories = JSON.parse(localStorage.getItem("inventories") || "{}");
+let allPets = JSON.parse(localStorage.getItem("allPets") || JSON.stringify([
+  "Red Kitsune","Raccoon","Disco Bee","Fennec Fox","Butterfly","Panda",
+  "Luminous Sprite","Spinosauros","Brontosauros","Wisp","Tiger","Mimic",
+  "Phoenix","Ferret","T-Rex","Corrupted Kit","Lobster","Mizuchi",
+  "Queen Bee","Golden Goose","Dragonfly"
+]));
+
+// ------------------ LOGIN ------------------
+function login() {
+  const usernameInput = document.getElementById("username").value.trim();
+  if (!usernameInput) return alert("Please enter a username!");
+
+  // Case-insensitive username check
+  let foundUser = Object.keys(inventories).find(u => u.toLowerCase() === usernameInput.toLowerCase());
+  currentUser = foundUser || usernameInput;
+
+  if (!inventories[currentUser]) inventories[currentUser] = {};
+
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("mainContainer").style.display = "block";
+  document.getElementById("userDisplay").innerText = currentUser + "'s Pet Inventory";
+  updateDropdown();
+  updateInventoryList();
+}
+
+// ------------------ PET SEARCH ------------------
+function searchPet() {
+  const query = document.getElementById("petSearch").value.trim().toLowerCase();
+  const resultsDiv = document.getElementById("searchResults");
+  resultsDiv.innerHTML = "";
+
+  if (!query) return;
+
+  // Fuzzy match pets
+  const matches = allPets.filter(pet => fuzzyMatch(pet.toLowerCase(), query));
+  if(matches.length === 0) {
+    resultsDiv.innerHTML = "<em>No pets found.</em>";
+    return;
+  }
+
+  matches.forEach(pet => {
+    // Find users who own this pet
+    const owners = [];
+    Object.keys(inventories).forEach(user => {
+      if(inventories[user][pet] && inventories[user][pet] > 0) owners.push(user);
+    });
+
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${pet}</strong> ${owners.length ? `- ${owners.join(", ")}` : "- No stock"}`;
+    resultsDiv.appendChild(div);
+  });
+}
+
+// Fuzzy match function
+function fuzzyMatch(str, pattern) {
+  let patternIndex = 0;
+  for(let i=0; i<str.length; i++){
+    if(str[i] === pattern[patternIndex]) patternIndex++;
+    if(patternIndex === pattern.length) return true;
+  }
+  return false;
+}
+
+// ------------------ DROPDOWNS ------------------
+function updateDropdown() {
+  const dropdown = document.getElementById("petSelect");
+  dropdown.innerHTML = '<option value="">-- Select a Pet --</option>';
+  allPets.sort().forEach(pet => {
+    const opt = document.createElement("option");
+    opt.textContent = pet;
+    dropdown.appendChild(opt);
+  });
+
+  const removeSelect = document.getElementById("removePetSelect");
+  removeSelect.innerHTML = '<option value="">-- Select a Pet --</option>';
+  allPets.forEach(pet => {
+    const opt = document.createElement("option");
+    opt.textContent = pet;
+    removeSelect.appendChild(opt);
+  });
+}
+
+// ------------------ INVENTORY ------------------
+function addPet() {
+  const pet = document.getElementById("petSelect").value;
+  if(!pet) return alert("Select a pet!");
+  if(!inventories[currentUser][pet]) inventories[currentUser][pet]=0;
+  inventories[currentUser][pet]++;
+  saveData();
+  updateInventoryList();
+}
+
+function updateInventoryList() {
+  const list = document.getElementById("inventoryList");
+  list.innerHTML="";
+  const pets = Object.entries(inventories[currentUser]).sort(([a],[b])=>a.localeCompare(b));
+  if(pets.length===0){ list.innerHTML="<p style='color:#aaa;'>No pets in inventory.</p>"; return; }
+
+  pets.forEach(([pet, qty])=>{
+    const div = document.createElement("div");
+    div.className="inventory-item";
+    div.innerHTML=`
+      <span class="pet-name">${pet}: <strong>${qty}</strong></span>
+      <div class="controls">
+        <button onclick="changeQty('${pet}',1)">+</button>
+        <button onclick="changeQty('${pet}',-1)">-</button>
+        <button class="delete-btn" onclick="confirmDelete('${pet}')">🗑️</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function changeQty(pet, amt) {
+  const userInv = inventories[currentUser];
+  userInv[pet]+=amt;
+  if(userInv[pet]<=0) delete userInv[pet];
+  saveData();
+  updateInventoryList();
+}
+
+function confirmDelete(pet){
+  if(confirm(`Delete "${pet}" from inventory?`)){
+    delete inventories[currentUser][pet];
+    saveData();
+    updateInventoryList();
+  }
+}
+
+// ------------------ SETTINGS ------------------
+function toggleSettings(){ document.getElementById("settingsPanel").style.display = (document.getElementById("settingsPanel").style.display==="none"?"block":"none"); }
+
+function toggleNewPet(){ document.getElementById("newPetContainer").style.display=(document.getElementById("newPetContainer").style.display==="none"?"block":"none"); }
+
+function saveNewPet(){
+  const pet = document.getElementById("newPetName").value.trim();
+  if(!pet) return alert("Enter a pet name!");
+  if(allPets.includes(pet)) return alert("Pet already exists!");
+  allPets.push(pet);
+  saveData();
+  updateDropdown();
+  document.getElementById("newPetName").value="";
+  document.getElementById("newPetContainer").style.display="none";
+  alert("New pet added!");
+}
+
+function toggleRemovePet(){ document.getElementById("removePetContainer").style.display=(document.getElementById("removePetContainer").style.display==="none"?"block":"none"); }
+
+function removePetFromList(){
+  const pet = document.getElementById("removePetSelect").value;
+  if(!pet) return alert("Select a pet to remove!");
+  if(confirm(`Remove "${pet}" from dropdown list? This won't delete from inventories.`)){
+    allPets = allPets.filter(p => p!==pet);
+    saveData();
+    updateDropdown();
+    document.getElementById("removePetContainer").style.display="none";
+  }
+}
+
+// ------------------ BACKUP ------------------
+function exportBackup(){
+  const data = JSON.stringify({inventories, allPets}, null,2);
+  const blob = new Blob([data], {type:"application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "pet_inventory_backup.json";
+  link.click();
+}
+
+function importBackup(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const data = JSON.parse(e.target.result);
+    inventories = data.inventories || {};
+    allPets = data.allPets || [];
+    saveData();
+    updateDropdown();
+    updateInventoryList();
+    alert("Backup imported!");
+  };
+  reader.readAsText(file);
+}
+
+// ------------------ LOGOUT & SAVE ------------------
+function logout(){ saveData(); currentUser=""; document.getElementById("mainContainer").style.display="none"; document.getElementById("loginContainer").style.display="block"; }
+function saveData(){ localStorage.setItem("inventories", JSON.stringify(inventories)); localStorage.setItem("allPets", JSON.stringify(allPets)); }
+</script>
+</body>
+</html>
